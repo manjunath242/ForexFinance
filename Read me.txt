@@ -1,0 +1,18 @@
+Intuit RIT challenge:
+
+I have done a forex indicator app using HTML,JQuery and Javascript and CSS.
+Basically it is a clint side page, which retrieves data from various web services.
+
+APIs Used:
+1) Currency layer- real time forex data updated hourly.
+2) Historical currency data obtained from openexchangerate.org.
+3) Currency converter from fixer.io .
+
+Package link: 
+
+Installation and instructions to run:
+1.Download all files into one folder.
+2.Open FinanceAdvice.html with a browser, preferably Google Chrome browser.
+3.Use the app with user interface.
+4. First table shows realtime forex data, On the right side there is a currency converter, 
+   below it you can find date based forex data retrieval table.

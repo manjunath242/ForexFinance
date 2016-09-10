@@ -1,0 +1,259 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <link rel="stylesheet" type="text/css" href="stylesheet.css">
+    <script src="https://code.jquery.com/jquery-1.10.2.js"></script>
+    <script>
+        // http://apilayer.net/api/live?access_key=6df34515c6081c120885a4eee672dfa8&currencies=AUD,CHF,EUR,GBP,CAD,INR
+        $.getJSON('https://apilayer.net/api/live?access_key=6df34515c6081c120885a4eee672dfa8',
+              function (data)
+              {
+
+
+                  $("#currencyTable").width(100);
+                  var sourceCur = document.getElementById('SourceCur');
+                  var toCur = document.getElementById('ToCur');
+
+                $(data.quotes).each(function (i, element) {
+                    //alert(element[i]);
+                    for (var prop in element) {
+                        //alert("Key:" + prop);
+                        //alert("Value:" + element[prop]);
+                        $("#currencyTable").last().append("<tr width=\"75\"><td width=\"25\">USD</td><td width=\"25\">" + prop.slice(3) + "</td><td width=\"25\">" + element[prop] + "</td></tr>");
+                        //sourceCur.add(new Option(prop.slice(3)));
+                        //toCur.add(new Option(prop.slice(3)));
+                    }
+                });
+
+
+                var query = "http://api.fixer.io/latest?base=USD";
+
+                  //alert(querystring);
+
+                $.getJSON(query, function (json) {
+                    //alert(source+to);
+
+                    $.each(json.rates, function (i, fb) {
+                        //alert(fb);
+                        sourceCur.add(new Option(i));
+                        toCur.add(new Option(i));
+
+                    });
+
+                });
+
+
+
+              });
+
+
+
+
+    </script>
+
+    <script type="text/javascript">
+        $(function () {
+
+            $('#btnConverter').click(function () {
+
+                var source = $('#SourceCur').val();
+                var to = $('#ToCur').val();
+
+                var sourcerate;
+                var torate;
+                var usd;
+
+                var result;
+
+                //var querystring = "http://api.fixer.io/latest?symbols=" + source + "," + to;
+
+                var querystring = "http://api.fixer.io/latest?base=USD";
+
+                //alert(querystring);
+
+                $.getJSON(querystring, function (json) {
+                    //alert(source+to);
+
+                    $.each(json.rates, function (i, fb) {
+                        //alert(fb);
+                        //sourceCur.add(new Option(i));
+                        //toCur.add(new Option(i));
+
+                    });
+
+                    $('conversionResult').val() = source / torate;
+
+                });
+
+
+                 $.getJSON(querystring, function (json) {
+                     //alert(source+to);
+
+                     $.each(json.rates, function (i, fb) {
+                         //alert(fb);
+                         
+                         if (i == $('#SourceCur').val()) {
+                             //alert(i);
+                             sourcerate = fb;
+                             //
+                             //alert(sourcerate);
+                         }
+
+                         if (i == $('#ToCur').val()) {
+                             //alert(i);
+                             torate = fb;
+                             //alert(torate);
+                         }
+                         
+                     });
+                     result = sourcerate / torate;
+                    // alert(result);
+
+                    // $('conversionResult').val() = result;
+                     document.getElementById('conversionResult').innerHTML = result;
+
+                 });
+
+            });
+
+
+            //var date = $('#DateDropDown').val();
+            //var month = $('#MonthDropDown').val();
+            //var year = $('#YearDropDown').val();
+
+            //alert(month);
+
+            //if ((((month % 2) == 0) && (date > 30)) || ((year == 2016) && (month > 8)) || ((month == 2) && (date > 28)))
+            //{
+
+            //    alert("data not available for these dates, select proper date!");
+            //    //return;
+            //}
+
+            //alert("accepted");
+
+            $('#btnGetExchangeRates').click(function () {
+                //location.reload();
+                $("#HistoricalTable tr").remove();
+                var date = $('#DateDropDown').val();
+                var month = $('#MonthDropDown').val();
+                var year = $('#YearDropDown').val();
+
+                if (month < 10) month = "0" + month;
+                if (date < 10) date = "0" + date;
+
+                var querystring = "https://openexchangerates.org/api/historical/" + year + "-" + month + "-" + date + ".json?app_id=bf6a52e291434fc6aaf03f7598fb5a04";
+
+               // alert(querystring);
+
+                $.getJSON(querystring,
+              function (data) {
+                  $("#HistoricalTable").width(100);
+                  $(data.rates).each(function (i, element) {
+                      //alert(element[i]);
+                      for (var prop in element) {
+                          //alert("Key:" + prop);
+                          //alert("Value:" + element[prop]);
+                          $("#HistoricalTable").last().append("<tr width=\"75\"><td width=\"25\">USD</td><td width=\"25\">" + prop + "</td><td width=\"25\">" + element[prop] + "</td></tr>");
+                      }
+                  });
+
+              });
+
+            });
+        });
+              
+    </script>
+
+    <script type="text/javascript">
+        window.onload = function loadscript() {
+            //alert("dropdown loading")
+            var selectmonth = document.getElementById('MonthDropDown');
+            var selectdate = document.getElementById('DateDropDown');
+            var selectyear = document.getElementById('YearDropDown');
+            var i=1;
+            for (i = 1; i <= 12;i++) {
+                selectmonth.add(new Option(i));
+            };
+
+            
+            var j = 1;
+            for (j = 1; j <= 31; j++) {
+                selectdate.add(new Option(j));
+            };
+
+            
+            var k = 2005;
+            for (k = 2005; k <= 2016; k++) {
+                selectyear.add(new Option(k));
+            };
+        }
+    </script>
+
+</head>
+<body onload="loadscript();">
+
+    <div>
+        <header>
+            <h1>Forex Rate Indicator</h1>
+        </header>
+        <header>
+            <h4>Source: currencylayer.com</h4>
+        </header>
+        <table id="currencyTable" style="float: left">
+            <tr>
+                <th>Source</th>
+                <th>Currency</th>
+                <th>Exchange rate</th>
+
+            </tr>
+
+        </table>
+        <header>
+            <h3>Currency Conversion</h3>
+                <h4>Source:fixer.io </h4>
+        </header>
+
+        <select id="SourceCur">
+            <option value="SourceCur" selected="selected">From</option>
+        </select>
+
+        <select id="ToCur">
+            <option value="ToCur" selected="selected">To</option>
+        </select>
+        <input type="button" id="btnConverter" value="Convert">
+
+        <label id="conversionResult">--</label>
+
+        <header>
+            <h3>Historical Data</h3>
+            <h4>Source: openexchangerates.org</h4>
+        </header>
+
+        <select id="MonthDropDown">
+            <option value="Month" selected="selected">Month</option>
+        </select>
+
+        <select id="DateDropDown">
+            <option value="Date" selected="selected">Date</option>
+        </select>
+
+        <select id="YearDropDown">
+            <option value="Year" selected="selected">Year</option>
+        </select>
+        <input type="button" id="btnGetExchangeRates" value="Get data">
+        <table id="HistoricalTable" style="float: none">
+            <tr>
+                <th>Source</th>
+                <th>Currency</th>
+                <th>Exchange rate</th>
+
+            </tr>
+
+        </table>
+
+    </div>
+
+
+</body>
+</html>
